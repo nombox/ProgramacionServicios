@@ -15,7 +15,7 @@ import java.util.List;
  * @author sebastian.eduardo.va
  */
 public class Ea8 {
-
+    public static class ProcesoTarea{
     /**
      * @return the nombre
      */
@@ -62,11 +62,11 @@ public class Ea8 {
     private String nombre;
     private int pid;
     
-    public Ea8(){
+    public ProcesoTarea(){
     
     }
     
-    public Ea8(String nombre, int pid){
+    public ProcesoTarea(String nombre, int pid){
     this.nombre = nombre;
     this.pid = pid;
     }
@@ -76,10 +76,12 @@ public class Ea8 {
         return "Proceso: " + this.nombre + "\n"
                 + "PID: " + this.pid;
     }
+    
+ }
 
     public static void main(String[] args) {
         
-        List<Ea8> listaProcesos = new ArrayList<>();
+        List<ProcesoTarea> listaProcesos = new ArrayList<>();
         
         try {
             // TODO code application logic here
@@ -89,19 +91,28 @@ public class Ea8 {
 
             try (BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
                 while ((linea = br.readLine()) != null) {
+                    
+                    linea = linea.trim();
+                    
+                    //por si la linea está vacía
+                    if(linea.isEmpty()){
+                    continue;
+                    }
+                    
                     String[] lineaActual = linea.split("\\s+");
+                    
+                    //Por si tiene menos de dos elementos
+                    if(lineaActual.length<2){
+                    continue;
+                    }
+                    
+                    
                     try{
                         
                         //Falta la parte de:
-                        /*
-                        y comprueba si el segundo trozo se puede convertir a número metiendo Integer.parseInt() 
-    dentro de un try- catch: si falla, esa línea no es un proceso (es la cabecera o la línea de ===) y la descartas.
-                        */
                         int pid= Integer.parseInt(lineaActual[1]);
                         
-                        Ea8 proceso = new Ea8(lineaActual[0], pid);
-                        
-                        listaProcesos.add(proceso);
+                        listaProcesos.add(new ProcesoTarea(lineaActual[0], pid));
 
                     }catch(NumberFormatException en){
                     
@@ -114,6 +125,19 @@ public class Ea8 {
         } catch (IOException ex) {
             System.getLogger(Ea8.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
+        
+        System.out.println("La cantidad de procesos son: "+listaProcesos.size());
+        
+        System.out.printf("%-30s%10s%n","Nombre Proceso","PID");
+        System.out.println("=".repeat(40));
+        
+        int limite = Math.min(5, listaProcesos.size());
+        
+        for(int i = 0; i<5; i++){
+        ProcesoTarea item = listaProcesos.get(i);
+        System.out.printf("%-30s%10d%n",item.getNombre(),item.getPid());
+        }
+        
 
     }
 
